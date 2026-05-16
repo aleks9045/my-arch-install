@@ -241,7 +241,7 @@ echo "[6/10] Установка GRUB..."
 arch-chroot /mnt grub-install \
     --target=x86_64-efi \
     --efi-directory=/boot \
-    --bootloader-id=ArchLinux \
+    --bootloader-id=GRUB \
     --recheck
 
 echo "[7/10] Настройка GRUB..."
