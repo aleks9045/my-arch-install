@@ -23,10 +23,10 @@ fi
 DISK="/dev/nvme0n1"
 
 # Разделы
-BOOT_PART="${DISK}p5"     # EFI раздел Arch (FAT32)
-WIN_EFI_PART="${DISK}p1"  # EFI раздел Windows (FAT32)
+BOOT_PART="${DISK}p5"     # EFI раздел Arch
+WIN_EFI_PART="${DISK}p1"  # EFI Windows
 ROOT_PART="${DISK}p6"     # /
-HOME_PART="${DISK}p7"     # /home (НЕ форматируется)
+HOME_PART="${DISK}p7"     # /home (не форматируется)
 
 # Система
 HOSTNAME="arch-vivo"
@@ -45,14 +45,11 @@ echo "========================================="
 echo "         УСТАНОВКА ARCH LINUX"
 echo "========================================="
 echo "Диск: $DISK"
-echo "EFI раздел: $BOOT_PART"
+echo "EFI раздел Arch: $BOOT_PART"
+echo "EFI раздел Windows: $WIN_EFI_PART"
 echo "Root раздел: $ROOT_PART"
 echo "Home раздел: $HOME_PART"
-echo "Windows EFI раздел: $WIN_EFI_PART"
 echo
-echo "Hostname: $HOSTNAME"
-echo "Пользователь: $USERNAME"
-echo "========================================="
 echo "БУДЕТ ОТФОРМАТИРОВАН:"
 echo "  - $ROOT_PART"
 echo
@@ -75,7 +72,7 @@ esac
 #                     ПРОВЕРКА РАЗДЕЛОВ
 # =========================================================
 
-for part in "$BOOT_PART" "$ROOT_PART" "$HOME_PART" "$WIN_EFI_PART"; do
+for part in "$BOOT_PART" "$WIN_EFI_PART" "$ROOT_PART" "$HOME_PART"; do
     if [[ ! -b "$part" ]]; then
         echo "Раздел не найден: $part"
         exit 1
@@ -86,7 +83,7 @@ done
 #                     ФОРМАТИРОВАНИЕ
 # =========================================================
 
-echo "[1/10] Форматирование root раздела..."
+echo "[1/7] Форматирование root..."
 
 mkfs.ext4 -F "$ROOT_PART" -L ARCH_ROOT
 
@@ -94,7 +91,7 @@ mkfs.ext4 -F "$ROOT_PART" -L ARCH_ROOT
 #                     МОНТИРОВАНИЕ
 # =========================================================
 
-echo "[2/10] Монтирование разделов..."
+echo "[2/7] Монтирование..."
 
 mount "$ROOT_PART" /mnt
 
@@ -105,51 +102,37 @@ mount "$HOME_PART" /mnt/home
 mount "$WIN_EFI_PART" /mnt/efi
 
 # =========================================================
-#                     УСТАНОВКА БАЗЫ
+#                     УСТАНОВКА СИСТЕМЫ
 # =========================================================
 
-echo "[3/10] Установка базовой системы..."
+echo "[3/7] Установка базовой системы..."
 
 pacstrap -K /mnt \
     base \
     linux \
-    linux-headers \
     linux-firmware \
     intel-ucode \
-    base-devel \
     sudo \
     vim \
     networkmanager \
     iwd \
     grub \
     efibootmgr \
-    os-prober \
-    dosfstools \
-    mtools \
-    git \
-    curl \
-    wget \
-    zsh \
-    pipewire \
-    pipewire-pulse \
-    wireplumber \
-    bluez \
-    bluez-utils \
-    ntfs-3g
+    os-prober
 
 # =========================================================
 #                     FSTAB
 # =========================================================
 
-echo "[4/10] Генерация fstab..."
+echo "[4/7] Генерация fstab..."
 
 genfstab -U /mnt > /mnt/etc/fstab
 
 # =========================================================
-#                     НАСТРОЙКА СИСТЕМЫ
+#                     НАСТРОЙКА
 # =========================================================
 
-echo "[5/10] Настройка системы..."
+echo "[5/7] Настройка системы..."
 
 arch-chroot /mnt /bin/bash << EOF
 
@@ -173,9 +156,6 @@ locale-gen
 
 echo "LANG=ru_RU.UTF-8" > /etc/locale.conf
 
-echo "KEYMAP=ru" > /etc/vconsole.conf
-echo "FONT=cyr-sun16" >> /etc/vconsole.conf
-
 # ---------------------------------------------------------
 # Hostname
 # ---------------------------------------------------------
@@ -189,7 +169,7 @@ cat > /etc/hosts << HOSTS
 HOSTS
 
 # ---------------------------------------------------------
-# Root password
+# Пароли
 # ---------------------------------------------------------
 
 echo "root:$ROOT_PASSWORD" | chpasswd
@@ -199,23 +179,17 @@ echo "root:$ROOT_PASSWORD" | chpasswd
 # ---------------------------------------------------------
 
 useradd \
-    -G wheel,audio,video,storage,optical,  \
-    -s /bin/zsh \
+    -G wheel \
+    -s /bin/bash \
     $USERNAME
 
 echo "$USERNAME:$USER_PASSWORD" | chpasswd
 
 # ---------------------------------------------------------
-# Ownership существующего home
+# Права на home
 # ---------------------------------------------------------
 
 chown $USERNAME:$USERNAME /home/$USERNAME
-
-# ---------------------------------------------------------
-# Очистка кэша
-# ---------------------------------------------------------
-
-rm -rf /home/$USERNAME/.cache
 
 # ---------------------------------------------------------
 # sudo
@@ -225,12 +199,11 @@ echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
 chmod 440 /etc/sudoers.d/wheel
 
 # ---------------------------------------------------------
-# Службы
+# Сервисы
 # ---------------------------------------------------------
 
 systemctl enable NetworkManager
-systemctl enable bluetooth
-systemctl enable systemd-timesyncd
+systemctl enable iwd
 
 EOF
 
@@ -238,7 +211,7 @@ EOF
 #                     GRUB
 # =========================================================
 
-echo "[6/10] Установка GRUB..."
+echo "[6/7] Установка GRUB..."
 
 arch-chroot /mnt grub-install \
     --target=x86_64-efi \
@@ -246,54 +219,16 @@ arch-chroot /mnt grub-install \
     --bootloader-id=GRUB \
     --recheck
 
-echo "[7/10] Настройка GRUB..."
-
 arch-chroot /mnt /bin/bash -c "
 echo 'GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 "
 
 # =========================================================
-#                     HYPRLAND
-# =========================================================
-
-echo "[8/10] Установка Hyprland..."
-
-arch-chroot /mnt pacman -S --needed --noconfirm \
-    hyprland \
-    xdg-desktop-portal \
-    xdg-desktop-portal-hyprland \
-    waybar \
-    rofi-wayland \
-    kitty \
-    nautilus \
-    grim \
-    slurp \
-    wl-clipboard \
-    pavucontrol \
-    polkit \
-    seatd \
-    qt5-wayland \
-    qt6-wayland \
-    noto-fonts \
-    noto-fonts-emoji \
-    ttf-dejavu
-
-arch-chroot /mnt systemctl enable seatd
-
-# =========================================================
-#                     ZSH
-# =========================================================
-
-echo "[9/10] Настройка ZSH..."
-
-arch-chroot /mnt chsh -s /bin/zsh "$USERNAME"
-
-# =========================================================
 #                     ЗАВЕРШЕНИЕ
 # =========================================================
 
-echo "[10/10] Завершение..."
+echo "[7/7] Завершение..."
 
 sync
 umount -R /mnt
@@ -303,6 +238,10 @@ echo "========================================="
 echo "         УСТАНОВКА ЗАВЕРШЕНА"
 echo "========================================="
 echo
-echo "Перезагрузите систему и войдите под пользователем $USERNAME"
+echo "Перезагрузитесь:"
+echo "reboot"
+echo
+echo "В UEFI выберите:"
+echo "GRUB"
 echo
 echo "========================================="
