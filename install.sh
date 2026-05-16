@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -eu
 
 # =========================================================
 #                     ПРОВЕРКИ
@@ -24,15 +24,14 @@ DISK="/dev/nvme0n1"
 
 # Разделы
 BOOT_PART="${DISK}p5"     # EFI раздел Arch (FAT32)
+WIN_EFI_PART="${DISK}p1"  # EFI раздел Windows (FAT32)
 ROOT_PART="${DISK}p6"     # /
 HOME_PART="${DISK}p7"     # /home (НЕ форматируется)
-WIN_EFI_PART="${DISK}p1"  # EFI раздел Windows (FAT32)
 
 # Система
 HOSTNAME="arch-vivo"
 USERNAME="aleks"
 
-# После установки лучше сменить
 USER_PASSWORD="654987654"
 ROOT_PASSWORD="654987654"
 
@@ -62,13 +61,15 @@ echo "  - $HOME_PART"
 echo "  - $BOOT_PART"
 echo "========================================="
 
-read -p "Продолжить? (y/N): " -n 1 -r
-echo
+read -r -p "Продолжить? (y/N): " REPLY < /dev/tty
 
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Установка отменена."
-    exit 1
-fi
+case "$REPLY" in
+    [Yy]) ;;
+    *)
+        echo "Установка отменена."
+        exit 1
+        ;;
+esac
 
 # =========================================================
 #                     ПРОВЕРКА РАЗДЕЛОВ
@@ -133,7 +134,8 @@ pacstrap -K /mnt \
     pipewire-pulse \
     wireplumber \
     bluez \
-    bluez-utils
+    bluez-utils \
+    ntfs-3g
 
 # =========================================================
 #                     FSTAB
@@ -197,7 +199,7 @@ echo "root:$ROOT_PASSWORD" | chpasswd
 # ---------------------------------------------------------
 
 useradd \
-    -G wheel,audio,video,storage,optical \
+    -G wheel,audio,video,storage,optical,  \
     -s /bin/zsh \
     $USERNAME
 
@@ -207,7 +209,7 @@ echo "$USERNAME:$USER_PASSWORD" | chpasswd
 # Ownership существующего home
 # ---------------------------------------------------------
 
-chown -R $USERNAME:$USERNAME /home/$USERNAME
+chown $USERNAME:$USERNAME /home/$USERNAME
 
 # ---------------------------------------------------------
 # Очистка кэша
