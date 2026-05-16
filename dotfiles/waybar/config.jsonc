@@ -1,0 +1,98 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "spacing": 2,
+    "margin-top": 4,
+    "margin-left": 4,
+    "margin-bottom": 0,
+    "margin-right": 4,
+
+    "modules-left": [
+        "hyprland/workspaces"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "pulseaudio",
+        "memory",
+        "cpu",
+        "battery",
+        "tray"
+    ],
+
+    // ========== Рабочие столы ==========
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10",
+            "active": "●",
+            "empty": "○",
+            "occupied": "◉"
+        },
+        "on-click": "activate",
+        "all-outputs": false,
+        "sort-by-number": true
+    },
+
+    // ========== Часы ==========
+    "clock": {
+        "format": "{:%H:%M  %d.%m.%Y}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    // ========== Звук ==========
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "🔇",
+        "format-icons": {
+            "default": ["🔈", "🔉", "🔊"]
+        },
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+        "tooltip": false
+    },
+
+    // ========== Память ==========
+    "memory": {
+        "format": "💾  {used:0.1f}G",
+        "interval": 10,
+        "tooltip": false
+    },
+
+    // ========== Процессор ==========
+    "cpu": {
+        "format": "📟  {usage}%",
+        "interval": 5,
+        "tooltip": false
+    },
+
+    // ========== Батарея ==========
+    "battery": {
+        "format": "{icon}  {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "format-charging": "⚡  {capacity}%",
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "tooltip": false
+    },
+
+    // ========== Трей ==========
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    }
+}

@@ -194,16 +194,7 @@ arch-chroot /mnt grub-install \
     --bootloader-id=GRUB \
     --recheck
 
-arch-chroot /mnt /bin/bash << 'EOF'
-
-grep -q '^GRUB_DISABLE_OS_PROBER=false' /etc/default/grub || \
-echo 'GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub
-
-os-prober
-
-grub-mkconfig -o /boot/grub/grub.cfg
-
-EOF
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 # =========================================================
 #                     ЗАВЕРШЕНИЕ
