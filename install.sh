@@ -30,9 +30,7 @@ HOME_PART="${DISK}p7"     # /home (не форматируется)
 
 # Система
 HOSTNAME="arch-vivo"
-USERNAME="aleks"
 
-USER_PASSWORD="654987654"
 ROOT_PASSWORD="654987654"
 
 TIMEZONE="Europe/Moscow"
@@ -50,12 +48,6 @@ echo "EFI раздел Windows: $WIN_EFI_PART"
 echo "Root раздел: $ROOT_PART"
 echo "Home раздел: $HOME_PART"
 echo
-echo "БУДЕТ ОТФОРМАТИРОВАН:"
-echo "  - $ROOT_PART"
-echo
-echo "НЕ БУДУТ ТРОНУТЫ:"
-echo "  - $HOME_PART"
-echo "  - $BOOT_PART"
 echo "========================================="
 
 read -r -p "Продолжить? (y/N): " REPLY < /dev/tty
@@ -83,9 +75,10 @@ done
 #                     ФОРМАТИРОВАНИЕ
 # =========================================================
 
-echo "[1/7] Форматирование root..."
+echo "[1/7] Форматирование..."
 
-mkfs.ext4 -F "$ROOT_PART" -L ARCH_ROOT
+mkfs.ext4 -F "$ROOT_PART"
+mkfs.fat -F32 "$BOOT_PART"
 
 # =========================================================
 #                     МОНТИРОВАНИЕ
@@ -175,23 +168,6 @@ HOSTS
 echo "root:$ROOT_PASSWORD" | chpasswd
 
 # ---------------------------------------------------------
-# Пользователь
-# ---------------------------------------------------------
-
-useradd \
-    -G wheel \
-    -s /bin/bash \
-    $USERNAME
-
-echo "$USERNAME:$USER_PASSWORD" | chpasswd
-
-# ---------------------------------------------------------
-# Права на home
-# ---------------------------------------------------------
-
-chown $USERNAME:$USERNAME /home/$USERNAME
-
-# ---------------------------------------------------------
 # sudo
 # ---------------------------------------------------------
 
@@ -203,7 +179,6 @@ chmod 440 /etc/sudoers.d/wheel
 # ---------------------------------------------------------
 
 systemctl enable NetworkManager
-systemctl enable iwd
 
 EOF
 
@@ -219,10 +194,16 @@ arch-chroot /mnt grub-install \
     --bootloader-id=GRUB \
     --recheck
 
-arch-chroot /mnt /bin/bash -c "
+arch-chroot /mnt /bin/bash << 'EOF'
+
+grep -q '^GRUB_DISABLE_OS_PROBER=false' /etc/default/grub || \
 echo 'GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub
+
+os-prober
+
 grub-mkconfig -o /boot/grub/grub.cfg
-"
+
+EOF
 
 # =========================================================
 #                     ЗАВЕРШЕНИЕ
