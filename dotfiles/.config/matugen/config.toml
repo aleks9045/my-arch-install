@@ -1,0 +1,7 @@
+[config]
+
+[templates.hyprland]
+input_path = "/home/aleks/.config/matugen/templates/hyprland-colors.lua"
+output_path = "/home/aleks/.config/hypr/conf/colors.lua"
+post_hook = "hyprctl reload"
+

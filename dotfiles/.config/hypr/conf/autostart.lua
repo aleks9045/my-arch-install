@@ -1,0 +1,6 @@
+hl.on("hyprland.start", function()
+    hl.exec_cmd("qs -c noctalia-shell")
+    hl.exec_cmd("hyprctl setcursor Bibata-Original-Classic 24")
+    hl.exec_cmd("kitty")
+    hl.exec_cmd("sotavpn")
+end)

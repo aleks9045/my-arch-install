@@ -31,7 +31,8 @@ HOME_PART="${DISK}p7"     # /home (не форматируется)
 # Система
 HOSTNAME="arch-vivo"
 
-ROOT_PASSWORD="654987654"
+read -sp "Введите пароль root: " ROOT_PASSWORD
+echo
 
 TIMEZONE="Europe/Moscow"
 
@@ -102,7 +103,9 @@ echo "[3/7] Установка базовой системы..."
 
 pacstrap -K /mnt \
     base \
+    base-devel \
     linux \
+    linux-headers \
     linux-firmware \
     intel-ucode \
     sudo \
@@ -131,16 +134,8 @@ arch-chroot /mnt /bin/bash << EOF
 
 set -e
 
-# ---------------------------------------------------------
-# Timezone
-# ---------------------------------------------------------
-
 ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
-
-# ---------------------------------------------------------
-# Locale
-# ---------------------------------------------------------
 
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "ru_RU.UTF-8 UTF-8" >> /etc/locale.gen
@@ -149,9 +144,8 @@ locale-gen
 
 echo "LANG=ru_RU.UTF-8" > /etc/locale.conf
 
-# ---------------------------------------------------------
-# Hostname
-# ---------------------------------------------------------
+echo "FONT=cyr-sun16" >> /etc/vconsole.conf
+echo "KEYMAP=ruwin_alt_sh-UTF-8" >> /etc/vconsole.conf
 
 echo "$HOSTNAME" > /etc/hostname
 
@@ -161,22 +155,13 @@ cat > /etc/hosts << HOSTS
 127.0.1.1 $HOSTNAME.localdomain $HOSTNAME
 HOSTS
 
-# ---------------------------------------------------------
-# Пароли
-# ---------------------------------------------------------
-
 echo "root:$ROOT_PASSWORD" | chpasswd
-
-# ---------------------------------------------------------
-# sudo
-# ---------------------------------------------------------
 
 echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
 chmod 440 /etc/sudoers.d/wheel
 
-# ---------------------------------------------------------
-# Сервисы
-# ---------------------------------------------------------
+useradd -G wheel,audio,video,input,storage,network,power,render aleks
+echo "aleks:$ROOT_PASSWORD" | chpasswd
 
 systemctl enable NetworkManager
 
