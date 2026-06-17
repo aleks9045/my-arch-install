@@ -7,13 +7,13 @@ set -eu
 # =========================================================
 
 if [[ $EUID -ne 0 ]]; then
-    echo "Запустите скрипт от root"
-    exit 1
+  echo "Запустите скрипт от root"
+  exit 1
 fi
 
 if [[ ! -d /sys/firmware/efi ]]; then
-    echo "Система загружена НЕ в UEFI режиме"
-    exit 1
+  echo "Система загружена НЕ в UEFI режиме"
+  exit 1
 fi
 
 # =========================================================
@@ -23,10 +23,10 @@ fi
 DISK="/dev/nvme0n1"
 
 # Разделы
-BOOT_PART="${DISK}p5"     # EFI раздел Arch
-WIN_EFI_PART="${DISK}p1"  # EFI Windows
-ROOT_PART="${DISK}p6"     # /
-HOME_PART="${DISK}p7"     # /home (не форматируется)
+BOOT_PART="${DISK}p5"    # EFI раздел Arch
+WIN_EFI_PART="${DISK}p1" # EFI Windows
+ROOT_PART="${DISK}p6"    # /
+HOME_PART="${DISK}p7"    # /home (не форматируется)
 
 # Система
 HOSTNAME="arch-vivo"
@@ -51,14 +51,14 @@ echo "Home раздел: $HOME_PART"
 echo
 echo "========================================="
 
-read -r -p "Продолжить? (y/N): " REPLY < /dev/tty
+read -r -p "Продолжить? (y/N): " REPLY </dev/tty
 
 case "$REPLY" in
-    [Yy]) ;;
-    *)
-        echo "Установка отменена."
-        exit 1
-        ;;
+[Yy]) ;;
+*)
+  echo "Установка отменена."
+  exit 1
+  ;;
 esac
 
 # =========================================================
@@ -66,10 +66,10 @@ esac
 # =========================================================
 
 for part in "$BOOT_PART" "$WIN_EFI_PART" "$ROOT_PART" "$HOME_PART"; do
-    if [[ ! -b "$part" ]]; then
-        echo "Раздел не найден: $part"
-        exit 1
-    fi
+  if [[ ! -b "$part" ]]; then
+    echo "Раздел не найден: $part"
+    exit 1
+  fi
 done
 
 # =========================================================
@@ -102,19 +102,19 @@ mount "$WIN_EFI_PART" /mnt/efi
 echo "[3/7] Установка базовой системы..."
 
 pacstrap -K /mnt \
-    base \
-    base-devel \
-    linux \
-    linux-headers \
-    linux-firmware \
-    intel-ucode \
-    sudo \
-    vim \
-    networkmanager \
-    iwd \
-    grub \
-    efibootmgr \
-    os-prober
+  base \
+  base-devel \
+  linux \
+  linux-headers \
+  linux-firmware \
+  intel-ucode \
+  sudo \
+  nvim \
+  networkmanager \
+  iwd \
+  grub \
+  efibootmgr \
+  os-prober
 
 # =========================================================
 #                     FSTAB
@@ -122,7 +122,7 @@ pacstrap -K /mnt \
 
 echo "[4/7] Генерация fstab..."
 
-genfstab -U /mnt > /mnt/etc/fstab
+genfstab -U /mnt >/mnt/etc/fstab
 
 # =========================================================
 #                     НАСТРОЙКА
@@ -130,7 +130,7 @@ genfstab -U /mnt > /mnt/etc/fstab
 
 echo "[5/7] Настройка системы..."
 
-arch-chroot /mnt /bin/bash << EOF
+arch-chroot /mnt /bin/bash <<EOF
 
 set -e
 
@@ -174,10 +174,10 @@ EOF
 echo "[6/7] Установка GRUB..."
 
 arch-chroot /mnt grub-install \
-    --target=x86_64-efi \
-    --efi-directory=/boot \
-    --bootloader-id=GRUB \
-    --recheck
+  --target=x86_64-efi \
+  --efi-directory=/boot \
+  --bootloader-id=GRUB \
+  --recheck
 
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
