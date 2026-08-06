@@ -1,31 +1,31 @@
 return {
     primary =
-        "rgb(acc7ff)",
+        "rgb(ffb2b8)",
 
     secondary =
-        "rgb(bec6dc)",
+        "rgb(e6bdbf)",
 
     tertiary =
-        "rgb(ddbcdf)",
+        "rgb(e8c08e)",
 
     surface =
-        "rgb(111318)",
+        "rgb(1a1112)",
 
     surface_bright =
-        "rgb(37393e)",
+        "rgb(413737)",
 
     surface_dim =
-        "rgb(111318)",
+        "rgb(1a1112)",
 
     outline =
-        "rgb(8e9099)",
+        "rgb(9f8c8d)",
 
     outline_variant =
-        "rgb(44474e)",
+        "rgb(524344)",
 
     error =
         "rgb(ffb4ab)",
 
     inactive_border =
-        "rgb(111318)"
+        "rgb(1a1112)"
 }

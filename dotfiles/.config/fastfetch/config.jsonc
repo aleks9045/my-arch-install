@@ -5,7 +5,7 @@
         "type": "small",
         "padding": {
             "top": 1,
-	    "left": 1
+	          "left": 2
         }
     },
     "display": {
@@ -39,33 +39,28 @@
             "type": "de"
         },
         {
-            "key": "• {#31} term    {#keys}•",
+            "key": "• {#37} term    {#keys}•",
             "type": "terminal"
         },
         {
-            "key": "• {#32} shell   {#keys}•",
+            "key": "• {#38} shell   {#keys}•",
             "type": "shell"
         },
         {
-            "key": "• {#33}󰏗 packs   {#keys}•",
-            "type": "packages"
+            "key": "• {#31}󰏗 packs   {#keys}•",
+            "type": "packsges"
         },
         {
-            "key": "• {#33}󰍛 cpu     {#keys}•",
-            "type": "cpu",
-            "showPeCoreCount": true
-        },
-        {
-            "key": "• {#34}󰉉 disk    {#keys}•",
+            "key": "• {#33}󰉉 disk    {#keys}•",
             "type": "disk",
             "folders": "/"
         },
         {
-            "key": "• {#35} memory  {#keys}•",
+            "key": "• {#34} memory  {#keys}•",
             "type": "memory"
         },
         {
-            "key": "• {#39} colors  {#keys}•",
+            "key": "• {#35} colors  {#keys}•",
             "type": "colors",
             "symbol": "circle"
         },

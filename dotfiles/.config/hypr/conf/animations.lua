@@ -1,179 +1,102 @@
--- =========================
--- 🎨 CURVES
--- =========================
+-- animation.lua
 
 hl.curve("linear", {
-    type = "bezier",
-    points = {
-        {0, 0},
-        {1, 1}
-    }
+	type = "bezier",
+	points = {
+		{ 0, 0 },
+		{ 1, 1 },
+	},
 })
 
-hl.curve("wind", {
-    type = "bezier",
-    points = {
-        {0.05, 0.9},
-        {0.1, 1.05}
-    }
+hl.curve("smooth", {
+	type = "bezier",
+	points = {
+		{ 0.25, 0.1 },
+		{ 0.25, 1 },
+	},
 })
 
-hl.curve("winIn", {
-    type = "bezier",
-    points = {
-        {0.1, 1.1},
-        {0.1, 1.1}
-    }
-})
-
-hl.curve("winOut", {
-    type = "bezier",
-    points = {
-        {0.3, -0.3},
-        {0, 1}
-    }
-})
-
-hl.curve("smoothOut", {
-    type = "bezier",
-    points = {
-        {0.36, 0},
-        {0.66, -0.56}
-    }
-})
-
-hl.curve("smoothIn", {
-    type = "bezier",
-    points = {
-        {0.25, 1},
-        {0.5, 1}
-    }
-})
-
-hl.curve("overshot", {
-    type = "bezier",
-    points = {
-        {0.33, 1},
-        {0.68, 1.12}
-    }
-})
-
-hl.curve("spring", {
-    type = "spring",
-    mass = 1,
-    stiffness = 70,
-    dampening = 15
-})
-
--- =========================
--- 🪟 WINDOWS
--- =========================
-
-hl.animation({
-    leaf = "windows",
-    enabled = true,
-    speed = 2,
-    bezier = "wind",
-    style = "slide"
+hl.curve("fast", {
+	type = "bezier",
+	points = {
+		{ 0.2, 0 },
+		{ 0.1, 1 },
+	},
 })
 
 hl.animation({
-    leaf = "windowsIn",
-    enabled = true,
-    speed = 2,
-    bezier = "winIn",
-    style = "slide"
+	leaf = "windows",
+	enabled = true,
+	speed = 1,
+	bezier = "fast",
 })
 
 hl.animation({
-    leaf = "windowsOut",
-    enabled = true,
-    speed = 2,
-    bezier = "winOut",
-    style = "slide"
+	leaf = "windowsIn",
+	enabled = false,
 })
 
 hl.animation({
-    leaf = "windowsMove",
-    enabled = true,
-    speed = 2,
-    bezier = "wind",
-    style = "slide"
-})
-
--- =========================
--- 🌫 FADE
--- =========================
-
-hl.animation({
-    leaf = "fade",
-    enabled = true,
-    speed = 2,
-    bezier = "smoothOut"
+	leaf = "windowsOut",
+	enabled = false,
 })
 
 hl.animation({
-    leaf = "fadeIn",
-    enabled = true,
-    speed = 2,
-    bezier = "smoothIn"
+	leaf = "windowsMove",
+	enabled = true,
+	speed = 1,
+	bezier = "fast",
+})
+
+-- Fade
+
+hl.animation({
+	leaf = "fade",
+	enabled = false,
 })
 
 hl.animation({
-    leaf = "fadeOut",
-    enabled = true,
-    speed = 2,
-    bezier = "smoothOut"
-})
-
--- =========================
--- 🧭 WORKSPACES
--- =========================
-
-hl.animation({
-    leaf = "workspaces",
-    enabled = true,
-    speed = 2,
-    bezier = "overshot",
-    style = "slidefade 20%"
-})
-
--- =========================
--- ✨ SPECIAL WORKSPACE
--- =========================
-
-hl.animation({
-    leaf = "specialWorkspace",
-    enabled = true,
-    speed = 2,
-    spring = "spring",
-    style = "slidefadevert 20%"
-})
-
--- =========================
--- 🪄 LAYERS
--- =========================
-
-hl.animation({
-    leaf = "layers",
-    enabled = true,
-    speed = 2,
-    bezier = "smoothOut",
-    style = "slide"
+	leaf = "fadeIn",
+	enabled = false,
 })
 
 hl.animation({
-    leaf = "layersIn",
-    enabled = true,
-    speed = 2,
-    bezier = "smoothIn",
-    style = "slide"
+	leaf = "fadeOut",
+	enabled = false,
+})
+
+-- Layers
+
+hl.animation({
+	leaf = "layers",
+	enabled = true,
+	speed = 1,
+	bezier = "fast",
+	style = "fade",
 })
 
 hl.animation({
-    leaf = "layersOut",
-    enabled = true,
-    speed = 2,
-    bezier = "smoothOut",
-    style = "slide"
+	leaf = "layersIn",
+	enabled = true,
+	speed = 1,
+	bezier = "fast",
+	style = "fade",
+})
+
+hl.animation({
+	leaf = "layersOut",
+	enabled = true,
+	speed = 1,
+	bezier = "fast",
+	style = "fade",
+})
+
+-- Workspaces
+
+hl.animation({
+	leaf = "workspaces",
+	enabled = true,
+	speed = 1,
+	bezier = "fast",
+	style = "slidefade 10%",
 })

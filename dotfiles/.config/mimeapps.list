@@ -1,0 +1,9 @@
+[Added Associations]
+application/pdf=firefox.desktop;
+image/jpeg=org.kde.gwenview.desktop;
+video/mp4=vlc.desktop;
+[Default Applications]
+application/pdf=firefox.desktop;
+image/jpeg=firefox.desktop;
+video/mp4=vlc.desktop;
+x-scheme-handler/jetbrains=jetbrainsd.desktop;

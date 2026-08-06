@@ -1,0 +1,15 @@
+[alias]
+	co = checkout
+	br = branch
+	sw = switch
+	ci = commit
+	st = status
+[user]
+	email = aleksey9045@gmail.com
+	name = aleks9045
+[core]
+	editor = nvim
+[credential]
+	helper = /usr/lib/git-core/git-credential-libsecret
+[init]
+	defaultBranch = main
